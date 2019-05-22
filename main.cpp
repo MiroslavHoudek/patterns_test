@@ -51,11 +51,11 @@ int main()
     ReceiverA r1;
     ReceiverB r2;
 
-    cb.registerCallback<0>([&r1](){r1.EventZeroHappened();});
-    cb.registerCallback<1>([&r1](int i, std::string s){r1.EventOneHappened(i,s);});
-    cb.registerCallback<2>([&r1](int i, int j){r1.EventTwoHappened(i,j);});
+    cb.registerCallback<0, 100>([&r1](){r1.EventZeroHappened();});
+    cb.registerCallback<1, 101>([&r1](int i, std::string s){r1.EventOneHappened(i,s);});
+    cb.registerCallback<2, 102>([&r1](int i, int j){r1.EventTwoHappened(i,j);});
 
-    cb.registerCallback<0>([&r2](){r2.EventZeroHappened();});
+    cb.registerCallback<0, 103>([&r2](){r2.EventZeroHappened();});
 
     cb.raiseEvent<0>();
     cb.raiseEvent<1>(37,"Hello There");
@@ -63,7 +63,7 @@ int main()
 
     std::cout << "pre";
 
-    cb.unregisterCallback<0>([&r2](){r2.EventZeroHappened();});
+    cb.unregisterCallback<0, 104>([&r2](){r2.EventZeroHappened();});
 
     std::cout << "apres";
 

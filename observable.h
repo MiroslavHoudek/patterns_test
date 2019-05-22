@@ -4,6 +4,7 @@
 #include <iostream>
 #include <functional>
 #include <vector>
+#include <map>
 #include <algorithm>
 #include <tuple>
 
@@ -18,15 +19,15 @@ template<typename ... Funcs>
 class Observable
 {
 public:
-    using ObserverList = std::tuple<std::vector<std::function<Funcs>>...>;
+    using ObserverList = std::tuple<std::map<unsigned int, std::function<Funcs>>...>;
 
-    template<unsigned int eventidx, typename Callable>
+    template<unsigned int eventidx, unsigned int handle, typename Callable>
     void registerCallback(Callable c)
     {
-        std::get<eventidx>(observers).emplace_back(c);
+        std::get<eventidx>(observers).insert(handle, c);
     }
 
-    template<unsigned int eventidx, typename Callable>
+    template<unsigned int eventidx, unsigned int handle, typename Callable>
     void unregisterCallback(Callable c)
     {
         std::cout << "unregister";
@@ -50,7 +51,7 @@ public:
     {
         for(auto f: std::get<eventidx>(observers))
         {
-            f(std::forward<T>(args)...);
+            //f(std::forward<T>(args)...);
         }
     }
 
