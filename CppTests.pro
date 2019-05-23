@@ -12,4 +12,4 @@ TEMPLATE = app
 SOURCES += main.cpp
 
 HEADERS += \
-    observable.h
+    callbackbase.h

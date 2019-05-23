@@ -13,8 +13,7 @@ class Callback : public CallbackBase<
 public:
 
 private:
-    int a;
-    std::string s;
+
 };
 
 class ReceiverA
@@ -39,33 +38,50 @@ public:
 class ReceiverB
 {
 public:
+    inline ReceiverB(Callback cb) {
+        cb = cb;
+    }
+
     void eventCallback1()
     {
         std::cout << "Receiver B - event 1\n";
     }
+
+    void eventCallback2(int a, std::string s)
+    {
+        std::cout << "Receiver B - event 2 " << a << " and " << "\"" << s << "\"" <<'\n';
+        std::cout << "And unregistering\n";
+        cb.unregisterCallback<1>(104);
+    }
+
+private:
+    Callback cb;
 };
 
 int main()
 {
     Callback cb;
     ReceiverA r1;
-    ReceiverB r2;
+    ReceiverB r2(cb);
 
     cb.registerCallback<0, 100>([&r1](){r1.eventCallback1();});
     cb.registerCallback<1, 101>([&r1](int i, std::string s){r1.eventCallback2(i,s);});
     cb.registerCallback<2, 102>([&r1](int i, int j){r1.eventCallback3(i,j);});
 
     cb.registerCallback<0, 103>([&r2](){r2.eventCallback1();});
+    cb.registerCallback<1, 104>([&r2](int i, std::string s){r2.eventCallback2(i,s);});
 
     cb.raiseEvent<0>();
     cb.raiseEvent<1>(37,"Hello There");
     cb.raiseEvent<2>(182,150);
 
-    std::cout << "pre";
+    std::cout << "pre\n";
 
     cb.unregisterCallback<0>(103);
+    //cb.unregisterCallback<1>(104);
 
-    std::cout << "apres";
+    std::cout << "post\n";
 
     cb.raiseEvent<0>();
+    cb.raiseEvent<1>(37,"Hello There");
 }
