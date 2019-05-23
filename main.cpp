@@ -38,8 +38,8 @@ public:
 class ReceiverB
 {
 public:
-    inline ReceiverB(Callback cb) {
-        cb = cb;
+    inline ReceiverB(Callback * cb) {
+        mCb = cb;
     }
 
     void eventCallback1()
@@ -51,18 +51,18 @@ public:
     {
         std::cout << "Receiver B - event 2 " << a << " and " << "\"" << s << "\"" <<'\n';
         std::cout << "And unregistering\n";
-        cb.unregisterCallback<1>(104);
+        mCb->unregisterCallback<1>(104);
     }
 
 private:
-    Callback cb;
+    Callback * mCb;
 };
 
 int main()
 {
     Callback cb;
     ReceiverA r1;
-    ReceiverB r2(cb);
+    ReceiverB r2(&cb);
 
     cb.registerCallback<0, 100>([&r1](){r1.eventCallback1();});
     cb.registerCallback<1, 101>([&r1](int i, std::string s){r1.eventCallback2(i,s);});
