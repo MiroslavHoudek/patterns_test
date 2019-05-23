@@ -2,9 +2,9 @@
 #include <functional>
 #include <vector>
 
-#include "observable.h"
+#include "callbackbase.h"
 
-class Callback : public Observable<
+class Callback : public CallbackBase<
                             void(void),
                             void(int,std::string),
                             void(int,int)
@@ -20,28 +20,28 @@ private:
 class ReceiverA
 {
 public:
-    void EventZeroHappened()
+    void eventCallback1()
     {
-        std::cout << "A has observed event zero\n";
+        std::cout << "Receiver A - event 1\n";
     }
 
-    void EventOneHappened(int a, std::string s)
+    void eventCallback2(int a, std::string s)
     {
-        std::cout << "A has observed event one with params: " << a << " and " << "\"" << s << "\"" <<'\n';
+        std::cout << "Receiver A - event 2 " << a << " and " << "\"" << s << "\"" <<'\n';
     }
 
-    void EventTwoHappened(int a, int b)
+    void eventCallback3(int a, int b)
     {
-        std::cout << "A has observed event two with params: " << a << " and " << b <<'\n';
+        std::cout << "Receiver A - event 3 " << a << " and " << b <<'\n';
     }
 };
 
 class ReceiverB
 {
 public:
-    void EventZeroHappened()
+    void eventCallback1()
     {
-        std::cout << "B has observed event zero\n";
+        std::cout << "Receiver B - event 1\n";
     }
 };
 
@@ -51,11 +51,11 @@ int main()
     ReceiverA r1;
     ReceiverB r2;
 
-    cb.registerCallback<0>([&r1](){r1.EventZeroHappened();});
-    cb.registerCallback<1>([&r1](int i, std::string s){r1.EventOneHappened(i,s);});
-    cb.registerCallback<2>([&r1](int i, int j){r1.EventTwoHappened(i,j);});
+    cb.registerCallback<0, 100>([&r1](){r1.eventCallback1();});
+    cb.registerCallback<1, 101>([&r1](int i, std::string s){r1.eventCallback2(i,s);});
+    cb.registerCallback<2, 102>([&r1](int i, int j){r1.eventCallback3(i,j);});
 
-    cb.registerCallback<0>([&r2](){r2.EventZeroHappened();});
+    cb.registerCallback<0, 103>([&r2](){r2.eventCallback1();});
 
     cb.raiseEvent<0>();
     cb.raiseEvent<1>(37,"Hello There");
@@ -63,7 +63,7 @@ int main()
 
     std::cout << "pre";
 
-    cb.unregisterCallback<0>([&r2](){r2.EventZeroHappened();});
+    cb.unregisterCallback<0>(103);
 
     std::cout << "apres";
 
